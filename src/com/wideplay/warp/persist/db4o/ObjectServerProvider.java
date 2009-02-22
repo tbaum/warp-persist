@@ -40,7 +40,7 @@ class ObjectServerProvider implements Provider<ObjectServer> {
                     Db4oSettings actualSettings = getSettings();
 
                     //validate configuration object
-                    if ( (!HostKind.FILE.equals(actualSettings.getHostKind())) && null == actualSettings.getConfiguration())
+                    if ((!HostKind.FILE.equals(actualSettings.getHostKind())) && null == actualSettings.getConfiguration())
                         throw new IllegalStateException("Must specify a Configuration when using " + actualSettings.getHost() + " server mode." +
                                 " For starters, try: bind(Configuration.class).toInstance(Db4o.newConfiguration());");
 
@@ -55,7 +55,12 @@ class ObjectServerProvider implements Provider<ObjectServer> {
                         return objectServer;
                         //otherwise it's a simple local-file database
                     } else if (HostKind.FILE.equals(actualSettings.getHostKind())) {
-                        return Db4o.openServer(actualSettings.getDatabaseFileName(), actualSettings.getPort());
+                        // optional Configuration instance
+                        if (actualSettings.getConfiguration() != null) {
+                            return Db4o.openServer(actualSettings.getConfiguration(), actualSettings.getDatabaseFileName(), actualSettings.getPort());
+                        } else {
+                            return Db4o.openServer(actualSettings.getDatabaseFileName(), actualSettings.getPort());
+                        }
                     }
                     // remote, fake objectServer.
                     return new NullObjectServer();
@@ -72,8 +77,8 @@ class ObjectServerProvider implements Provider<ObjectServer> {
     }
 
     public ObjectServer get() {
-		return this.objectServer.get();
-	}
+        return this.objectServer.get();
+    }
 
     protected Db4oSettings getSettings() {
         return this.settings != null ?
