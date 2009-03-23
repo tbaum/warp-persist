@@ -1,10 +1,17 @@
-<project name="warp-persist" default="make">
+<project name="warp-persist" default="test">
     <description>Persistence support for Warp, or any guice-based project using hibernate or JPA</description>
 
     <property file="build.properties"/>
 
     <path id="persist.classpath">
         <fileset dir="lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="persist.classpath.guice1">
+        <fileset dir="lib">
+            <exclude name="guice*.jar"/>
             <include name="**/*.jar"/>
         </fileset>
     </path>
@@ -43,17 +50,30 @@
         </copy>
     </target>
 
-    <target name="make" depends="compile" description="compiles sources">
-
-
+    <target name="test" depends="compile" description="runs unit tests against Guice 1 and 2">
         <taskdef name="testng" classname="org.testng.TestNGAntTask">
-            <classpath refid="persist.classpath"/>
+            <classpath>
+                <fileset dir="lib">
+                    <include name="testng*.jar"/>
+                </fileset>
+            </classpath>
         </taskdef>
 
         <!-- run them with testng -->
-        <testng haltonfailure="true" verbose="2" suitename="warp-persist unit tests">
+        <testng haltonfailure="true" verbose="2" suitename="warp-persist unit tests using Guice 2">
             <classpath>
                 <path refid="persist.classpath"/>
+
+                <pathelement location="${test}"/>
+                <pathelement location="${build}"/>
+            </classpath>
+
+            <classfileset dir="${test}" includes="**/*Test.class"/>
+        </testng>
+
+        <testng haltonfailure="true" verbose="2" suitename="warp-persist unit tests using Guice 1">
+            <classpath>
+                <path refid="persist.classpath.guice1"/>
 
                 <pathelement location="${test}"/>
                 <pathelement location="${build}"/>
@@ -64,7 +84,7 @@
     </target>
 
 
-    <target name="assemble.jar" depends="make"
+    <target name="assemble.jar" depends="test"
             description="builds and assembles a library jar for drop in persistence support in guice injectors">
         <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"
                  classpath="lib/jarjar-1.0rc5.jar"/>
@@ -86,13 +106,29 @@
             description="tests against distribution jar (assumes you have already built one in dist)">
         <!-- then test against it -->
         <taskdef name="testng" classname="org.testng.TestNGAntTask">
-            <classpath refid="persist.classpath"/>
+            <classpath>
+                <fileset dir="lib">
+                    <include name="testng*.jar"/>
+                </fileset>
+            </classpath>
         </taskdef>
 
         <!-- run them with testng -->
-        <testng haltonfailure="true" verbose="2" suitename="warp-persist unit tests">
+        <testng haltonfailure="true" verbose="2" suitename="warp-persist unit tests using Guice 2">
             <classpath>
                 <path refid="persist.classpath"/>
+
+                <pathelement location="${test}"/>
+                <pathelement location="${dist}/warp-persist-${version}.jar"/>
+            </classpath>
+
+            <classfileset dir="${test}" includes="**/*Test.class"/>
+        </testng>
+
+        <!-- run them with testng -->
+        <testng haltonfailure="true" verbose="2" suitename="warp-persist unit tests using Guice 1">
+            <classpath>
+                <path refid="persist.classpath.guice1"/>
 
                 <pathelement location="${test}"/>
                 <pathelement location="${dist}/warp-persist-${version}.jar"/>
