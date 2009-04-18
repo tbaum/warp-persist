@@ -25,13 +25,10 @@ import com.wideplay.warp.persist.db4o.Db4oPersistenceStrategy;
 import com.wideplay.warp.persist.hibernate.HibernatePersistenceStrategy;
 import com.wideplay.warp.persist.hibernate.HibernateTestEntity;
 import com.wideplay.warp.persist.jpa.JpaPersistenceStrategy;
-import com.wideplay.warp.persist.PersistenceStrategy;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.testng.annotations.Test;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.Properties;
 
@@ -43,7 +40,8 @@ import java.util.Properties;
  * @since 1.0
  */
 public class EdslBuilderTest {
-    @Test public void testEdslLanguage() {
+    @Test
+    public void testEdslLanguage() {
         PersistenceService.usingHibernate().buildModule();
 
         PersistenceService.usingHibernate().across(UnitOfWork.REQUEST)
@@ -53,7 +51,8 @@ public class EdslBuilderTest {
         PersistenceService.usingHibernate().across(UnitOfWork.TRANSACTION).forAll(Matchers.any()).buildModule();
     }
 
-    @Test public void testHibernateConfig() {
+    @Test
+    public void testHibernateConfig() {
         Injector injector = Guice.createInjector(PersistenceService.usingHibernate().across(UnitOfWork.TRANSACTION)
                 .buildModule(),
                 new AbstractModule() {
@@ -71,28 +70,28 @@ public class EdslBuilderTest {
     @Test
     public final void testMultimodulesConfigJpa() {
         PersistenceStrategy jpa = JpaPersistenceStrategy.builder()
-                                                        .properties(new Properties())
-                                                        .unit("myUnit")
-                                                        .annotatedWith(MyUnit.class).build();
+                .properties(new Properties())
+                .unit("myUnit")
+                .annotatedWith(MyUnit.class).build();
         Module m = PersistenceService.using(jpa)
-                                     .across(UnitOfWork.TRANSACTION)
+                .across(UnitOfWork.TRANSACTION)
 
-                                     .forAll(Matchers.any(), Matchers.annotatedWith(Transactional.class))
-                                     .buildModule();
-        
+                .forAll(Matchers.any(), Matchers.annotatedWith(Transactional.class))
+                .buildModule();
+
         Guice.createInjector(m);
     }
 
     @Test
     public final void testMultimodulesConfigHibernate() {
         PersistenceStrategy h = HibernatePersistenceStrategy.builder()
-                                                        .configuration(new Configuration())
-                                                        .annotatedWith(MyUnit.class).build();
+                .configuration(new Configuration())
+                .annotatedWith(MyUnit.class).build();
         Module m = PersistenceService.using(h)
-                                     .across(UnitOfWork.TRANSACTION)
+                .across(UnitOfWork.TRANSACTION)
 
-                                     .forAll(Matchers.any(), Matchers.annotatedWith(Transactional.class))
-                                     .buildModule();
+                .forAll(Matchers.any(), Matchers.annotatedWith(Transactional.class))
+                .buildModule();
 
         Guice.createInjector(m);
     }
@@ -100,27 +99,28 @@ public class EdslBuilderTest {
     @Test
     public final void testPersistenceServicesProvider() {
         PersistenceStrategy h = HibernatePersistenceStrategy.builder()
-                                                        .configuration(new Configuration())
-                                                        .annotatedWith(MyUnit.class).build();
+                .configuration(new Configuration())
+                .annotatedWith(MyUnit.class).build();
         Module hibernateModule = PersistenceService.using(h)
-                                     .across(UnitOfWork.TRANSACTION)
+                .across(UnitOfWork.TRANSACTION)
 
-                                     .forAll(Matchers.any(), Matchers.annotatedWith(Transactional.class))
-                                     .buildModule();
+                .forAll(Matchers.any(), Matchers.annotatedWith(Transactional.class))
+                .buildModule();
 
         PersistenceStrategy jpa = JpaPersistenceStrategy.builder()
-                                            .properties(new Properties())
-                                            .unit("myUnit")
-                                            .annotatedWith(MySecondUnit.class).build();
+                .properties(new Properties())
+                .unit("myUnit")
+                .annotatedWith(MySecondUnit.class).build();
         Module jpaModule = PersistenceService.using(jpa)
-                                     .across(UnitOfWork.TRANSACTION)
+                .across(UnitOfWork.TRANSACTION)
 
-                                     .forAll(Matchers.any(), Matchers.annotatedWith(Transactional.class))
-                                     .buildModule();
+                .forAll(Matchers.any(), Matchers.annotatedWith(Transactional.class))
+                .buildModule();
 
         List<PersistenceService> persistenceServices = Guice.createInjector(hibernateModule, jpaModule,
                 new PersistenceServiceExtrasModule())
-                .getInstance(Key.get(new TypeLiteral<List<PersistenceService>>() {}));
+                .getInstance(Key.get(new TypeLiteral<List<PersistenceService>>() {
+                }));
 
         assert persistenceServices.size() == 2;
     }
@@ -128,29 +128,22 @@ public class EdslBuilderTest {
     @Test
     public final void testMultimodulesConfigDb4o() {
         PersistenceStrategy h = Db4oPersistenceStrategy.builder()
-                                                        .configuration(Db4o.newConfiguration())
-                                                        .annotatedWith(MyUnit.class)//.databaseFileName("TestDatabase.data")
-                                                        .host("localhost").port(4321).user("autobot").password("morethanmeetstheeye")
-                                                        .build();
+                .configuration(Db4o.newConfiguration())
+                .annotatedWith(MyUnit.class)//.databaseFileName("TestDatabase.data")
+                .host("localhost").port(4321).user("autobot").password("morethanmeetstheeye")
+                .build();
         Module m = PersistenceService.using(h)
-                                     .across(UnitOfWork.TRANSACTION)
-                                     .forAll(Matchers.any(), Matchers.annotatedWith(Transactional.class))
-                                     .buildModule();
+                .across(UnitOfWork.TRANSACTION)
+                .forAll(Matchers.any(), Matchers.annotatedWith(Transactional.class))
+                .buildModule();
         PersistenceService service = Guice.createInjector(m).getInstance(Key.get(PersistenceService.class, MyUnit.class));
         service.start();
         service.shutdown();
     }
 
-    @Retention(RetentionPolicy.RUNTIME)
-    @BindingAnnotation
-    @interface MyUnit {}
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @BindingAnnotation
-    @interface MySecondUnit {}
-
     static class TransactionalObject {
-        @Transactional public void txnMethod() {
+        @Transactional
+        public void txnMethod() {
         }
     }
 }

@@ -23,9 +23,9 @@ import java.lang.annotation.*;
  * Any method or class marked with this annotation will be considered for transactionality.
  * Consult the documentation on http://www.wideplay.com for detailed semantics.
  * </p>
- *
+ * <p/>
  * <p>
- *  Marking a method {@code @Transactional} will work with the default configuration as
+ * Marking a method {@code @Transactional} will work with the default configuration as
  * expected. Any classes marked {@code @Transactional} will only work if you specify the
  * {@code forAll(Matchers.annotatedWith(Transactional.class), Matchers.any()} clause in your
  * warp-persist module configuration.
@@ -34,14 +34,21 @@ import java.lang.annotation.*;
  * Class level {@code @Transactional} allows you to specify transaction semantics for all
  * non-private methods in the class once at the top. You can optionally override it on a per-method
  * basis too. However, this means that classes not marked {@code @Transactional} but with
- * methods marked {@code @Transactional} will *not* be intercepted for transaction wrapping. 
+ * methods marked {@code @Transactional} will *not* be intercepted for transaction wrapping.
  * </p>
  *
  * @author Dhanji R. Prasanna (dhanji@gmail.com)
  */
-@Target({ ElementType.METHOD, ElementType.TYPE })
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Transactional {
+    /**
+     * The persistence unit binding annotation that specifies which Hibernate / JPA / ... instance
+     * needs to back the transaction. Only needed when using multiple persistence modules.
+     *
+     * @return the persistence unit binding annotation set by the user or
+     *         {@link com.wideplay.warp.persist.Defaults.DefaultUnit}
+     */
     Class<? extends Annotation> unit() default Defaults.DefaultUnit.class;
 
     /**
@@ -58,7 +65,7 @@ public @interface Transactional {
      *
      * @return Returns the configured rollback exceptions.
      */
-    Class<? extends Exception> [] rollbackOn() default RuntimeException.class;
+    Class<? extends Exception>[] rollbackOn() default RuntimeException.class;
 
 
     /**
@@ -67,11 +74,11 @@ public @interface Transactional {
      * that will trigger a rollback.
      * The complement of rollbackOn and the universal set plus any exceptions in the
      * exceptOn set represents the list of exceptions that will trigger a commit.
-     *
+     * <p/>
      * Note that exceptOn exceptions take precedence over rollbackOn, but with subtype
-     * granularity. 
+     * granularity.
      *
      * @return Returns the configured rollback exceptions.
      */
-    Class<? extends Exception> [] exceptOn() default {};
+    Class<? extends Exception>[] exceptOn() default {};
 }

@@ -34,6 +34,13 @@ import java.util.Collection;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Finder {
+    /**
+     * The persistence unit binding annotation that specifies which Hibernate / JPA / ... instance
+     * needs to implement this finder. Only needed when using multiple persistence modules.
+     *
+     * @return the persistence unit binding annotation set by the user or
+     *         {@link com.wideplay.warp.persist.Defaults.DefaultUnit}
+     */
     Class<? extends Annotation> unit() default Defaults.DefaultUnit.class;
 
     /**
@@ -55,7 +62,7 @@ public @interface Finder {
     /**
      * Use this clause to specify a collection impl to autobox result lists into. The impl *must*
      * have a default no-arg constructor and be a subclass of {@code java.util.Collection}.
-     *  
+     *
      * @return Returns the configured autoboxing collection class.
      */
     Class<? extends Collection> returnAs() default ArrayList.class;
