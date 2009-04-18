@@ -37,8 +37,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 
-/** Unit tests the SPR filter. */
-public class SessionFilterTest {
+/**
+ * Unit tests the SPR filter.
+ */
+public class PersistenceFilterTest {
     @BeforeClass
     public void pre() {
         // protect against sloppy tests elsewhere
@@ -46,7 +48,8 @@ public class SessionFilterTest {
     }
 
     @AfterClass
-    public void post() { }
+    public void post() {
+    }
 
     @AfterMethod
     public void cleanSessionFilter() {
@@ -85,20 +88,21 @@ public class SessionFilterTest {
                 throw new RuntimeException();
             }
         };
-        
+
         final ValidatableWorkManager workManager3 = new ValidatableWorkManager();
         PersistenceFilter.registerWorkManager(workManager1);
         PersistenceFilter.registerWorkManager(workManager2);
         PersistenceFilter.registerWorkManager(workManager3);
-        
+
         try {
             spr.doFilter(null, null, null);
             throw new AssertionError();
-        } catch (RuntimeException e) {}
+        } catch (RuntimeException e) {
+        }
 
         assert workManager1.beginCalled;
         assert workManager1.endCalled;
-        
+
         assert workManager2.beginCalled;
         assert !workManager2.endCalled;
 
@@ -133,7 +137,8 @@ public class SessionFilterTest {
         try {
             spr.doFilter(null, null, chain);
             throw new AssertionError();
-        } catch (RuntimeException e) {}
+        } catch (RuntimeException e) {
+        }
 
         assert workManager1.endCalled;
         assert workManager2.endCalled;
@@ -157,7 +162,7 @@ public class SessionFilterTest {
         };
 
         final ValidatableWorkManager workManager3 = new ValidatableWorkManager();
-        
+
         PersistenceFilter.registerWorkManager(workManager1);
         PersistenceFilter.registerWorkManager(workManager2);
         PersistenceFilter.registerWorkManager(workManager3);
@@ -165,8 +170,9 @@ public class SessionFilterTest {
         try {
             spr.doFilter(null, null, null);
             throw new AssertionError();
-        } catch (RuntimeException e) {}
-        
+        } catch (RuntimeException e) {
+        }
+
         assert workManager1.beginCalled;
         assert workManager2.beginCalled;
         assert !workManager3.beginCalled;
@@ -178,14 +184,14 @@ public class SessionFilterTest {
     @Test
     public final void testUseRealWorkManager() throws IOException, ServletException {
         final Injector injector = Guice.createInjector(PersistenceService.usingHibernate()
-            .across(UnitOfWork.REQUEST)
-            .forAll(Matchers.any())
-            .buildModule(),
+                .across(UnitOfWork.REQUEST)
+                .forAll(Matchers.any())
+                .buildModule(),
                 new AbstractModule() {
                     protected void configure() {
                         bind(Configuration.class).toInstance(new AnnotationConfiguration()
-                            .addAnnotatedClass(HibernateTestEntity.class)
-                            .setProperties(Initializer.loadProperties("spt-persistence.properties")));
+                                .addAnnotatedClass(HibernateTestEntity.class)
+                                .setProperties(Initializer.loadProperties("spt-persistence.properties")));
                     }
                 });
 
@@ -207,9 +213,11 @@ public class SessionFilterTest {
     static class ValidatableWorkManager implements WorkManager {
         boolean beginCalled;
         boolean endCalled;
+
         public void beginWork() {
             beginCalled = true;
         }
+
         public void endWork() {
             endCalled = true;
         }
