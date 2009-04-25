@@ -54,10 +54,16 @@ public class TransactionMatcher {
         this.txMethodMatcher = txMethodMatcher;
     }
 
+    /**
+     * @return the matcher used to find classes that need transaction support
+     */
     public Matcher<? super Class<?>> getClassMatcher() {
         return txClassMatcher;
     }
 
+    /**
+     * @return the matcher used to find methods that need transaction support
+     */
     public Matcher<? super Method> getMethodMatcher() {
         return txMethodMatcher;
     }

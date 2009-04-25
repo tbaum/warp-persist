@@ -1,7 +1,6 @@
 package com.wideplay.warp.persist.spi;
 
 import com.google.inject.Module;
-import com.wideplay.warp.persist.spi.PersistenceModuleVisitor;
 
 /**
  * {@link com.google.inject.Module} returned by
@@ -10,5 +9,10 @@ import com.wideplay.warp.persist.spi.PersistenceModuleVisitor;
  * @author Robbie Vanbrabant
  */
 public interface PersistenceModule extends Module {
+    /**
+     * Visit a persistence module and collect information used to configure
+     * services that Warp Persist offers, like managing the unit of work.
+     * @param visitor invoked by the receiving module to set information relevant to Warp Persist
+     */
     void visit(PersistenceModuleVisitor visitor);
 }

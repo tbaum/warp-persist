@@ -25,14 +25,29 @@ import java.util.Set;
  * @author Robbie Vanbrabant
  */
 public interface PersistenceConfiguration {
+    /**
+     * @return the unit of work
+     */
     UnitOfWork getUnitOfWork();
 
+    /**
+     * Returns the transaction matchers configured using one of the
+     * {@link com.wideplay.warp.persist.TransactionStrategyBuilder} {@code forAll(...)} methods.
+     * <p>
+     * When the list is empty, this means the defaults are in effect. These can be found in the
+     * {@link com.wideplay.warp.persist.Defaults} class. We always match on any class, and any method with the
+     * {@code @Transactional} annotation. When a unit annotations is used (multiple modules mode) the method matcher
+     * also needs to match on that unit annotation; the right matcher can be created by using the
+     * {@link com.wideplay.warp.persist.PersistenceMatchers} class.
+     * 
+     * @return all user-configured transaction matchers or an empty list
+     */
     List<TransactionMatcher> getTransactionMatchers();
 
     /**
      * Returns the configured Dynamic Accessors, which are
      * Dynamic Finders that are interfaces.
-     * @return all configured Dynamic Accessors
+     * @return all configured Dynamic Accessors or an empty set
      */
     Set<Class<?>> getDynamicAccessors();
 }
