@@ -16,12 +16,9 @@
 package com.wideplay.warp.persist;
 
 import com.google.inject.matcher.Matcher;
-import com.google.inject.matcher.Matchers;
 import static com.google.inject.matcher.Matchers.any;
-import static com.google.inject.matcher.Matchers.annotatedWith;
-import static com.google.inject.matcher.Matchers.*;
-import com.wideplay.warp.persist.dao.Finder;
 import com.wideplay.warp.persist.internal.InternalPersistenceMatchers;
+import com.wideplay.warp.persist.spi.ClassAndMethodMatcher;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -35,14 +32,24 @@ public class Defaults {
     private Defaults() {}
 
     public static final UnitOfWork UNIT_OF_WORK = UnitOfWork.TRANSACTION;
-    
-    public static final Matcher<? super Class<?>> TX_CLASS_MATCHER = any();
-    public static final Matcher<? super Method> TX_METHOD_MATCHER =
-            PersistenceMatchers.transactionalWithUnit(DefaultUnit.class);
 
-    public static final Matcher<? super Class<?>> FINDER_CLASS_MATCHER = any();
-    public static final Matcher<? super Method> FINDER_METHOD_MATCHER =
-            InternalPersistenceMatchers.finderWithUnit(DefaultUnit.class);
+    public static final ClassAndMethodMatcher TRANSACTION_MATCHER = new ClassAndMethodMatcher() {
+        public Matcher<? super Class<?>> getClassMatcher() {
+            return any();
+        }
+        public Matcher<? super Method> getMethodMatcher() {
+            return PersistenceMatchers.transactionalWithUnit(DefaultUnit.class);
+        }
+    };
+
+    public static final ClassAndMethodMatcher FINDER_MATCHER = new ClassAndMethodMatcher() {
+        public Matcher<? super Class<?>> getClassMatcher() {
+            return any();
+        }
+        public Matcher<? super Method> getMethodMatcher() {
+            return InternalPersistenceMatchers.finderWithUnit(DefaultUnit.class);
+        }
+    };
 
     /**
      * Default persistence unit annotation.

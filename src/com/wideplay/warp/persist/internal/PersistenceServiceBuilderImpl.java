@@ -18,13 +18,9 @@ package com.wideplay.warp.persist.internal;
 
 import com.google.inject.Module;
 import com.google.inject.matcher.Matcher;
-import com.wideplay.warp.persist.spi.PersistenceModuleVisitor;
 import com.wideplay.warp.persist.*;
-import com.wideplay.warp.persist.internal.HasPersistenceStrategy;
-import com.wideplay.warp.persist.internal.PersistenceConfigurationImpl;
-import com.wideplay.warp.persist.internal.PersistenceFlavor;
-import com.wideplay.warp.persist.spi.TransactionMatcher;
 import com.wideplay.warp.persist.spi.PersistenceModule;
+import com.wideplay.warp.persist.spi.PersistenceModuleVisitor;
 import net.jcip.annotations.NotThreadSafe;
 
 import java.lang.reflect.Method;

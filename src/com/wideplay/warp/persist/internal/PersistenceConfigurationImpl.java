@@ -15,15 +15,14 @@
  */
 package com.wideplay.warp.persist.internal;
 
+import com.wideplay.warp.persist.Defaults;
+import com.wideplay.warp.persist.UnitOfWork;
+import com.wideplay.warp.persist.spi.ClassAndMethodMatcher;
+import com.wideplay.warp.persist.spi.PersistenceConfiguration;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.ThreadSafe;
 
 import java.util.*;
-
-import com.wideplay.warp.persist.spi.PersistenceConfiguration;
-import com.wideplay.warp.persist.spi.TransactionMatcher;
-import com.wideplay.warp.persist.UnitOfWork;
-import com.wideplay.warp.persist.Defaults;
 
 /**
  * Value object that indicates how a persistence service should be configured.
@@ -37,7 +36,7 @@ import com.wideplay.warp.persist.Defaults;
 class PersistenceConfigurationImpl implements PersistenceConfiguration {
     private final UnitOfWork unitOfWork;
     private final Set<Class<?>> accessors;
-    private final List<TransactionMatcher> transactionMatchers;
+    private final List<ClassAndMethodMatcher> transactionMatchers;
 
     private PersistenceConfigurationImpl(PersistenceConfigurationBuilder builder) {
         this.unitOfWork = builder.unitOfWork;
@@ -51,7 +50,7 @@ class PersistenceConfigurationImpl implements PersistenceConfiguration {
     public Set<Class<?>> getDynamicAccessors() {
         return this.accessors;
     }
-    public List<TransactionMatcher> getTransactionMatchers() {
+    public List<ClassAndMethodMatcher> getTransactionMatchers() {
         return transactionMatchers;
     }
 
@@ -62,7 +61,7 @@ class PersistenceConfigurationImpl implements PersistenceConfiguration {
     static class PersistenceConfigurationBuilder {
         // default values
         private UnitOfWork unitOfWork = Defaults.UNIT_OF_WORK;
-        private List<TransactionMatcher> transactionMatchers = new ArrayList<TransactionMatcher>();
+        private List<ClassAndMethodMatcher> transactionMatchers = new ArrayList<ClassAndMethodMatcher>();
 
         private final Set<Class<?>> accessors = new LinkedHashSet<Class<?>>();
 
@@ -70,7 +69,7 @@ class PersistenceConfigurationImpl implements PersistenceConfiguration {
             this.unitOfWork = unitOfWork;
             return this;
         }
-        public PersistenceConfigurationBuilder transactionMatcher(TransactionMatcher txMatcher) {
+        public PersistenceConfigurationBuilder transactionMatcher(ClassAndMethodMatcher txMatcher) {
             this.transactionMatchers.add(txMatcher);
             return this;
         }

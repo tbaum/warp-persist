@@ -42,7 +42,7 @@ public interface PersistenceConfiguration {
      * 
      * @return all user-configured transaction matchers or an empty list
      */
-    List<TransactionMatcher> getTransactionMatchers();
+    List<ClassAndMethodMatcher> getTransactionMatchers();
 
     /**
      * Returns the configured Dynamic Accessors, which are
