@@ -94,7 +94,7 @@ class HibernateLocalTxnInterceptor implements MethodInterceptor {
         } finally {
 
             //if read-only txn, then restore flushmode, default is automatic flush
-            if (TransactionType.READ_ONLY.equals(transactional.type()))
+            if (session.isOpen() && TransactionType.READ_ONLY.equals(transactional.type()))
                 session.setFlushMode(savedFlushMode);
         }
     }
