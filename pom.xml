@@ -104,8 +104,14 @@
             <artifactId>aopalliance</artifactId>
             <version>1.0</version>
         </dependency>
-
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>guice-maven</id>
+            <name>guice maven</name>
+            <url>http://guice-maven.googlecode.com/svn/trunk</url>
+        </repository>
+    </repositories>
 </project>
 
